@@ -208,7 +208,7 @@ function draw() {
 		dy = -dy;
 	}
 	//Hvis bolden rammer 'paddle' boksen vender den vertikalt
-	else if(y + dy > canvas.height-ballRadius-3) {
+	else if(y + dy > canvas.height-ballRadius-4) {
 		if(x > paddleX && x < paddleX + paddleWidth) {
 			dy = -dy;
 		}
