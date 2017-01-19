@@ -5,9 +5,9 @@
    
 
    
-	<name>Test</name>
+	<name>BreakOut1</name>
     <description>
-        Test af at fremstille en app med html og javascript
+        Breakout spil skrevet i JavaScript
     </description>
     <author email="support@phonegap.com" href="http://phonegap.com">
         PhoneGap Team
