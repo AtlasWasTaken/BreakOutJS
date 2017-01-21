@@ -1,5 +1,7 @@
 //Javascript for Breakout spil
-//De fleste variabler bliver defineret uden værdier globalt, og værdierne gives så inde i funktioner.
+//De fleste variabler bliver defineret uden værdier globalt, 
+//og værdierne gives så inde i funktioner.
+
 //Først: Canvas-elementet i HTML
 var canvas;
 var ctx;
@@ -36,20 +38,23 @@ var lives = 3;
 
 //init() funktionen loader onload, så alting herinde vil loade samtidig med siden.
 function init() {
+	//Definerer et context variabel for canvas-elementet i HTML dokumentet.
 	canvas = document.getElementById("myCanvas");
 	ctx = canvas.getContext("2d");
-	
+	//Default-states for kontrol af 'paddle' elementet.
 	rightPressed = false;
 	leftPressed = false;
-	
+	//Kører de to funktioner
 	touchCtrl();
 	kbCtrl();
-	
+	//Placering (x og y) og retning (dx og dy) for 'bolden'
 	x = canvas.width/2;
 	y = canvas.height-30;
 	ddx = 5;
+	//Sørger for at bolden har en 'tilfældig' retning, for at spillene ikke bliver identiske.
 	dx = Math.random()*(ddx+ddx)-ddx;
 	dy = -4;
+	//Sørger for at bolden har en passende høj hastighed, og ikke er 0.
 	if(dx < 0.5 && dx > -0.5) {
 		document.location.reload();
 	}
@@ -74,7 +79,7 @@ function init() {
 			bricks[c][r] = { x: 0, y: 0, status: 1 };
 		}
 	}
-	
+	//Sørger for at draw() funktionen kører når dokumentet loades.
 	draw();
 }
 //Tegner bolden
@@ -93,7 +98,7 @@ function drawPaddle() {
     ctx.fill();
     ctx.closePath();
 }
-//Tegner bricks
+//Tegner bricks i vores array fra 'init()'
 function drawBricks() {
 	for(c=0; c<brickColumnCount; c++) {
 		for(r=0; r<brickRowCount; r++) {
@@ -123,6 +128,7 @@ function collisionDetection() {
 					dy = -dy;
 					b.status = 0;
 					score++;
+					//Tjekker om scoren svarer til mængden af bricks. Hvis det, 'vinder' man.
 					if(score == brickColumnCount*brickRowCount) {
 						alert("You win!");
 						document.location.reload();
@@ -144,29 +150,9 @@ function drawLives() {
 	ctx.fillStyle = "#0095DD";
 	ctx.fillText("Lives: " + lives, canvas.width-65, 20)
 }
-
-//Keyboard controls
-function kbCtrl() {
-	document.addEventListener("keydown", keyDownHandler, false);
-	document.addEventListener("keyup", keyUpHandler, false);
-}
-function keyDownHandler(e) {
-	if(e.keyCode ==39) {
-		rightPressed = true;
-	}
-	else if(e.keyCode == 37) {
-		leftPressed = true;
-	}
-}
-function keyUpHandler(e) {
-	if(e.keyCode == 39) {
-		rightPressed = false;
-	}
-	else if(e.keyCode == 37) {
-		leftPressed = false;
-	}
-}
 //Touch controls
+//Ændrer variablerne 'rightPressed' og 'leftPressed' til true hvis man trykker på skærmen,
+//og false når man giver slip og ikke rør længere.
 function touchCtrl() {
 	document.addEventListener("touchstart", pMoveStart, false);
 	document.addEventListener("touchend", pMoveEnd, false);
@@ -187,11 +173,34 @@ function pMoveEnd() {
 		leftPressed = false;
 	}
 }
+//Keyboard controls
+//Tilføjet for at gøre det nemmere at teste spillet på en computer.
+function kbCtrl() {
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+}
+function keyDownHandler(e) {
+	if(e.keyCode ==39) {
+		rightPressed = true;
+	}
+	else if(e.keyCode == 37) {
+		leftPressed = true;
+	}
+}
+function keyUpHandler(e) {
+	if(e.keyCode == 39) {
+		rightPressed = false;
+	}
+	else if(e.keyCode == 37) {
+		leftPressed = false;
+	}
+}
 //Sletter og tegner på canvas on repeat. 
 //Tjekker for collisions.
 function draw() {
 	//Første linje 'clearer' canvas-elementet, så der ikke er nogle tegninger gemt fra forrige loop.
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	//Tegner alle elementerne.
 	drawBricks();
 	drawBall();
 	drawPaddle();
@@ -199,11 +208,11 @@ function draw() {
 	drawLives();
 	//Tjekker for collison
 	collisionDetection();
-	//Vender bolden hvis den rører ved en af siderne på canvas-elementet (x-axis collision).
+	//Vender bolden hvis den rører ved en af siderne på canvas-elementet (x.axis collision).
 	if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
 		dx = -dx;
 	}
-	//Vender bolden hvis den rører toppen af canvas-elementet (+y.axis collision).
+	//Vender bolden hvis den rører toppen af canvas-elementet (positiv y.axis collision).
 	if(y + dy < ballRadius) {
 		dy = -dy;
 	}
@@ -212,19 +221,27 @@ function draw() {
 		if(x > paddleX && x < paddleX + paddleWidth) {
 			dy = -dy;
 		}
-		//Hvis ikke får man en 'Game over' besked, og siden reloader så man kan spille igen.
+		//Hvis ikke mister man et liv
 		else {
 			lives--;
+			//Har man ikke flere liv 'taber' man spillet, og det starter forfra.
 			if(!lives) {
 				alert("Game Over. Try again?");
 				document.location.reload();
 			}
+			//Hvis man /har/ flere liv, resetter det bolden og 'paddle'.
 			else {
 				x = canvas.width/2;
                 y = canvas.height-30;
-                dx = 3;
-                dy = -3;
-                paddleX = (canvas.width-paddleWidth)/2;
+                ddx = 5;
+				//Sørger for at bolden har en 'tilfældig' retning, for at spillene ikke bliver identiske.
+				dx = Math.random()*(ddx+ddx)-ddx;
+				dy = -4;
+				//Sørger for at bolden har en passende høj hastighed, og ikke er 0.
+				if(dx < 0.5 && dx > -0.5) {
+					document.location.reload();
+				}
+				paddleX = (canvas.width-paddleWidth)/2;
 			}
 		}
 	}
@@ -238,7 +255,8 @@ function draw() {
 	//Flyter boldens placering til næste loop - virker som 'bevægelse'.
 	x += dx;
     y += dy;
-	
-	//Gentager draw() funktionen når 
+	//Gentager draw() funktionen når alle funktionerne i den er overstået.
+	//Fremfor et setInterval loop kører dette så snart det kan.
+	//Skulle gøre det mere 'smooth' at spille.
 	requestAnimationFrame(draw);
 }
